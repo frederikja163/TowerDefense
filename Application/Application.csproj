@@ -7,6 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="OpenTK.Graphics" Version="5.0.0-pre.3" />
+      <PackageReference Include="OpenTK.Windowing.GraphicsLibraryFramework" Version="5.0.0-pre.3" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\Rendering\Rendering.csproj" />
       <ProjectReference Include="..\Simulation\Simulation.csproj" />

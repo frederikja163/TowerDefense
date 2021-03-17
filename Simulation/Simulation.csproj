@@ -1,10 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>TowerDefense.Simulation</RootNamespace>
         <AssemblyName>TowerDefense.Simulation</AssemblyName>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="OpenTK.Mathematics" Version="5.0.0-pre.3" />
+    </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Common\Common.csproj" />
