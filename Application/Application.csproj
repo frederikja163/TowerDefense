@@ -13,7 +13,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Common\Common.csproj" />
-      <ProjectReference Include="..\Rendering\Rendering.csproj" />
+      <ProjectReference Include="..\Rendering\Platform.csproj" />
       <ProjectReference Include="..\Simulation\Simulation.csproj" />
     </ItemGroup>
 
