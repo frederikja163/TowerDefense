@@ -4,10 +4,15 @@
         <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>TowerDefense.Platform</RootNamespace>
         <AssemblyName>TowerDefense.Platform</AssemblyName>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Common\Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="OpenTK.Windowing.GraphicsLibraryFramework" Version="5.0.0-pre.3" />
     </ItemGroup>
 
 </Project>
