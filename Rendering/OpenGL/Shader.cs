@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using Vector2 = System.Numerics.Vector2;
 
 namespace TowerDefense.Platform.OpenGL
 {
@@ -111,7 +110,8 @@ namespace TowerDefense.Platform.OpenGL
         public void SetUniform(int location, Vector4 value) => GL.ProgramUniform4f(Handle, location, value.X, value.Y, value.Z, value.W);
         public void SetUniform(int location, Vector4i value) => GL.ProgramUniform4i(Handle, location, value.X, value.Y, value.Z, value.W);
         
-        public void SetUniform(int location, Matrix4 value) => GL.ProgramUniformMatrix4fv(Handle, location, 1, false, value.M11);
+        public void SetUniform(int location, Matrix4 value)
+            => GL.ProgramUniformMatrix4fv(Handle, location, 1, false, value.M11);
         
         public void Dispose()
         {
