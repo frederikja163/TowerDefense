@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using GlfwWindow = OpenTK.Windowing.GraphicsLibraryFramework.Window;
 
@@ -131,23 +132,36 @@ namespace TowerDefense.Platform.Glfw
     
     internal sealed class Keyboard
     {
-        public event Action<Key> OnKeyPressed;
-        
+        private HashSet<Key> _keyState = new HashSet<Key>();
+
         internal unsafe Keyboard(GlfwWindow* window)
         {
             GLFW.SetKeyCallback(window, KeyCallback);
         }
-
-        // public bool IsKeyPressed(Key key)
-        // {
-        //     bool keyPressed;
-        // }
+        
+        public delegate void KeyEvent(Key key);
+        public event KeyEvent OnKeyPressed;
+        public event KeyEvent OnKeyReleased;
+        
+        public bool this[Key key] => _keyState.Contains(key);
         
         private unsafe void KeyCallback(GlfwWindow* window, Keys keyRaw, int code, InputAction action, KeyModifiers mods)
         {
             Key key = (Key) keyRaw;
-            
-            OnKeyPressed?.Invoke(key);
+
+            switch (action)
+            {
+                case InputAction.Press:
+                    _keyState.Add(key);
+                    OnKeyPressed?.Invoke(key);
+                    break;
+                case InputAction.Release:
+                    _keyState.Remove(key);
+                    OnKeyReleased?.Invoke(key);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

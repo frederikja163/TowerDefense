@@ -14,6 +14,7 @@ namespace TowerDefense.Platform.Glfw
             unsafe
             {
                 _handle = GLFW.CreateWindow(800, 600, "Tower Defensé", null, null);
+                Keyboard = new Keyboard(_handle);
 
                 if (_handle == null)
                 {
@@ -21,6 +22,8 @@ namespace TowerDefense.Platform.Glfw
                 }
             }
         }
+        
+        public Keyboard Keyboard { get; }
 
         public void MakeCurrent()
         {
