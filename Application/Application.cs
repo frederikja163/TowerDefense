@@ -27,6 +27,7 @@ namespace TowerDefense
 
         public void Run()
         {
+            _platform.InitializeRendering();
             while (_isRunning)
             {
                 _platform.PollInput();

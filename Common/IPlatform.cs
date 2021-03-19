@@ -8,6 +8,8 @@ namespace TowerDefense.Common
 {
     public interface IPlatform : IDisposable
     {
+        void InitializeRendering();
+        
         void PollInput();
     }
 }

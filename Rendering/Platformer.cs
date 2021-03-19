@@ -9,6 +9,8 @@ namespace TowerDefense.Platform
 {
     public static class Platformer
     {
+        private static IRenderer[] _renderers = new IRenderer[1];
+        
         public static IPlatform GetPlatform()
         {
             return new GlfwPlatform();
@@ -16,10 +18,12 @@ namespace TowerDefense.Platform
 
         public static IReadOnlyCollection<IRenderer> GetRenderers()
         {
-            return new IRenderer[]
-            {
+            return _renderers;
+        }
 
-            };
+        internal static void InitializeRenderers()
+        {
+            _renderers[0] = new TestTriangleRenderer();
         }
     }
 }

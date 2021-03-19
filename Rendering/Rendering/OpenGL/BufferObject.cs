@@ -1,7 +1,7 @@
 using System;
 using OpenTK.Graphics.OpenGL;
 
-namespace TowerDefense.Platform.OpenGL
+namespace TowerDefense.Platform.Rendering.OpenGL
 {
     internal abstract class BufferObject : IDisposable
     {

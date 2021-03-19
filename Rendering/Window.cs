@@ -17,7 +17,7 @@ namespace TowerDefense.Platform
         {
             unsafe
             {
-                _handle = GLFW.CreateWindow(800, 600, "Tower Defensé", null, null);
+                _handle = GLFW.CreateWindow(800, 600, "Tower Defense", null, null);
 
                 if (_handle == null)
                 {

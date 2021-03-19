@@ -3,7 +3,7 @@ using System.IO;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 
-namespace TowerDefense.Platform.OpenGL
+namespace TowerDefense.Platform.Rendering.OpenGL
 {
     internal abstract class ShaderBase : IDisposable
     {
@@ -56,13 +56,10 @@ namespace TowerDefense.Platform.OpenGL
     {
         internal uint Handle;
 
-        public ShaderProgram()
+        public ShaderProgram(params ShaderBase[] shaders)
         {
             Handle = GL.CreateProgram();
-        }
-
-        public void Link(params ShaderBase[] shaders)
-        {
+            
             foreach (ShaderBase shader in shaders)
             {
                 GL.AttachShader(Handle, shader.Handle);
@@ -115,7 +112,7 @@ namespace TowerDefense.Platform.OpenGL
         
         public void Dispose()
         {
-            GL.DeleteShader(Handle);
+            GL.DeleteProgram(Handle);
         }
     }
 }
