@@ -6,7 +6,7 @@ namespace TowerDefense.Platform
 {
     internal sealed class ClearRenderer : IRenderer
     {
-        public void Render(in GameData data)
+        public void Render(in GameData game)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
         }

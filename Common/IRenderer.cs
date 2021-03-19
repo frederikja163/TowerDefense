@@ -9,6 +9,6 @@ namespace TowerDefense.Common
 {
     public interface IRenderer
     {
-        void Render(in GameData data);
+        void Render(in GameData game);
     }
 }
