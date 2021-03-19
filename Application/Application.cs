@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Threading;
 using TowerDefense.Common;
 using TowerDefense.Common.Game;
 using TowerDefense.Platform;
@@ -19,7 +20,7 @@ namespace TowerDefense
 
         public Application()
         {
-            _game = new GameData(new ImmutableArray<Enemy>(), ImmutableArray<Tower>.Empty);
+            _game = new GameData(ImmutableArray<Enemy>.Empty, ImmutableArray<Tower>.Empty);
 
             _platform = Platformer.GetPlatform();
 
@@ -49,6 +50,7 @@ namespace TowerDefense
                 {
                     _game = simulator.Tick(_game);
                 }
+                Thread.Sleep(1000/60);
 
                 foreach (IRenderer renderer in _renderers)
                 {
