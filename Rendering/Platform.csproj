@@ -5,6 +5,7 @@
         <RootNamespace>TowerDefense.Platform</RootNamespace>
         <AssemblyName>TowerDefense.Platform</AssemblyName>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>

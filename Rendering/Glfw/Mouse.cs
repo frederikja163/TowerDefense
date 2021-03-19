@@ -22,13 +22,13 @@ namespace TowerDefense.Platform.Glfw
     {
         private readonly HashSet<MouseButton> _heldButtons;
 
-        internal unsafe Mouse(Window window)
+        internal unsafe Mouse(GlfwWindow* handle)
         {
             _heldButtons = new HashSet<MouseButton>();
             
-            GLFW.SetMouseButtonCallback(window.Handle, MouseButtonCallback);
-            GLFW.SetCursorPosCallback(window.Handle, CursorPosCallback);
-            GLFW.SetScrollCallback(window.Handle, ScrollCallback);
+            GLFW.SetMouseButtonCallback(handle, MouseButtonCallback);
+            GLFW.SetCursorPosCallback(handle, CursorPosCallback);
+            GLFW.SetScrollCallback(handle, ScrollCallback);
         }
 
         public delegate void MouseButtonEvent(MouseButton button);

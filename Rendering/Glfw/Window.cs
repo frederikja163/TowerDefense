@@ -13,17 +13,26 @@ namespace TowerDefense.Platform.Glfw
         {
             unsafe
             {
-                Handle = GLFW.CreateWindow(800, 600, "Tower Defensé", null, null);
-                
-                Keyboard = new Keyboard(this);
-                Mouse = new Mouse(this);
-
+                Handle = GLFW.CreateWindow(800, 600, "Tower Defense", null, null);
                 if (Handle == null)
                 {
                     throw new Exception("Window failed to create.");
                 }
+                
+                Keyboard = new Keyboard(Handle);
+                Mouse = new Mouse(Handle);
+
+                GLFW.SetWindowCloseCallback(Handle, WindowCloseCallback);
             }
         }
+
+        private unsafe void WindowCloseCallback(GlfwWindow* window)
+        {
+            WindowClosed.Invoke();
+        }
+
+        public delegate void WindowCloseEvent();
+        public event WindowCloseEvent WindowClosed;
         
         public Keyboard Keyboard { get; }
         public Mouse Mouse { get; }

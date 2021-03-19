@@ -10,6 +10,7 @@ namespace TowerDefense
         private readonly IPlatform _platform;
         private readonly IReadOnlyCollection<IRenderer> _renderers;
         private readonly IReadOnlyCollection<ISimulator> _simulators;
+        private readonly ActivityList _activities;
 
         private GameData _game;
         private bool _isRunning = true;
@@ -23,6 +24,16 @@ namespace TowerDefense
             _renderers = Platformer.GetRenderers();
 
             _simulators = Simulator.GetSimulators();
+
+            _activities = new ActivityList();
+            _platform.ImplementActivities(_activities);
+            
+            _activities[Activities.ExitApplication].Callback += OnExitApplication;
+        }
+
+        private void OnExitApplication(Activities activities)
+        {
+            _isRunning = false;
         }
 
         public void Run()

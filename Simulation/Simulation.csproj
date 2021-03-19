@@ -4,6 +4,7 @@
         <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>TowerDefense.Simulation</RootNamespace>
         <AssemblyName>TowerDefense.Simulation</AssemblyName>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
