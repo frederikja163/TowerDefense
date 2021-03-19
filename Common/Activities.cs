@@ -10,7 +10,7 @@ namespace TowerDefense.Common
     }
     public enum MovementActivities
     {
-        
+        PlaceTower,
     }
 
     public delegate void ActivityEvent(Activities activities);
@@ -30,7 +30,7 @@ namespace TowerDefense.Common
         public event ActivityEvent? Callback;
     }
 
-    public delegate void MovementActivityEvent(MovementActivities activities, Vector2 newPosition, Vector2 oldPosition);
+    public delegate void MovementActivityEvent(MovementActivities activities, Vector2 position);
     public sealed class MovementActivity
     {
         internal MovementActivity(MovementActivities type)
@@ -40,9 +40,9 @@ namespace TowerDefense.Common
             
         public MovementActivities Type { get; }
             
-        public void Call(Vector2 newPosition, Vector2 oldPosition)
+        public void Call(Vector2 position)
         {
-            Callback?.Invoke(Type, newPosition, oldPosition);
+            Callback?.Invoke(Type, position);
         }
         public event MovementActivityEvent? Callback;
     }

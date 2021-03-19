@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using OpenTK.Graphics;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using TowerDefense.Common;
 
@@ -10,6 +11,7 @@ namespace TowerDefense.Platform.Glfw
     {
         private readonly Window _window;
         private readonly Dictionary<Keys, Activity> _keysToActivities;
+        private MovementActivity _towerPlaceActivity;
 
         public GlfwPlatform()
         {
@@ -21,10 +23,20 @@ namespace TowerDefense.Platform.Glfw
 
             _window = new Window();
             
-            _window.Keyboard.OnKeyPressed += KeyboardOnOnKeyPressed;
+            _window.Keyboard.OnKeyPressed += KeyboardOnKeyPressed;
+            _window.Mouse.MouseButtonPressed += OnMouseButtonPressed;
         }
 
-        private void KeyboardOnOnKeyPressed(Keys key)
+        private void OnMouseButtonPressed(MouseButton button)
+        {
+            if (button == MouseButton.Left)
+            {
+                _towerPlaceActivity.Call(new Vector2(_window.Mouse.Position.X / _window.Size.X,
+                    _window.Mouse.Position.Y / -_window.Size.Y + 1));
+            }
+        }
+
+        private void KeyboardOnKeyPressed(Keys key)
         {
             if (_keysToActivities.TryGetValue(key, out Activity? activity))
             {
@@ -36,6 +48,8 @@ namespace TowerDefense.Platform.Glfw
         {
             _keysToActivities.Add(Keys.Escape, activities[Activities.ExitApplication]);
             _window.WindowClosed += activities[Activities.ExitApplication].Call;
+            
+            _towerPlaceActivity = activities[MovementActivities.PlaceTower];
         }
 
         public void InitializeRendering()

@@ -19,16 +19,16 @@ namespace TowerDefense
 
         public Application()
         {
-            _game = new GameData(new ImmutableArray<Enemy>());
+            _game = new GameData(new ImmutableArray<Enemy>(), ImmutableArray<Tower>.Empty);
 
             _platform = Platformer.GetPlatform();
 
             _renderers = Platformer.GetRenderers();
 
-            _simulators = Simulator.GetSimulators();
-
             _activities = new ActivityList();
             _platform.ImplementActivities(_activities);
+
+            _simulators = Simulator.GetSimulators(_activities);
             
             _activities[Activities.ExitApplication].Callback += OnExitApplication;
         }
