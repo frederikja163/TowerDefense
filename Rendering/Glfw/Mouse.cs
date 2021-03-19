@@ -32,15 +32,15 @@ namespace TowerDefense.Platform.Glfw
         }
 
         public delegate void MouseButtonEvent(MouseButton button);
-        public event MouseButtonEvent MouseButtonPressed;
-        public event MouseButtonEvent MouseButtonReleased;
+        public event MouseButtonEvent? MouseButtonPressed;
+        public event MouseButtonEvent? MouseButtonReleased;
 
         public delegate void MouseMovedEvent(Vector2 newPosition, Vector2 oldPosition);
-        public event MouseMovedEvent MouseMoved;
+        public event MouseMovedEvent? MouseMoved;
         public Vector2 Position { get; private set; }
         
         public delegate void MouseScrollEvent(Vector2 newScroll, Vector2 oldScroll);
-        public event MouseScrollEvent MouseScroll; 
+        public event MouseScrollEvent? MouseScroll; 
         public Vector2 Scroll { get; private set; }
         
         public bool this[MouseButton button] => _heldButtons.Contains(button);

@@ -28,11 +28,11 @@ namespace TowerDefense.Platform.Glfw
 
         private unsafe void WindowCloseCallback(GlfwWindow* window)
         {
-            WindowClosed.Invoke();
+            WindowClosed?.Invoke();
         }
 
         public delegate void WindowCloseEvent();
-        public event WindowCloseEvent WindowClosed;
+        public event WindowCloseEvent? WindowClosed;
         
         public Keyboard Keyboard { get; }
         public Mouse Mouse { get; }

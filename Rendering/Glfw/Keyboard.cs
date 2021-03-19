@@ -16,8 +16,8 @@ namespace TowerDefense.Platform.Glfw
         }
         
         public delegate void KeyEvent(Keys key);
-        public event KeyEvent OnKeyPressed;
-        public event KeyEvent OnKeyReleased;
+        public event KeyEvent? OnKeyPressed;
+        public event KeyEvent? OnKeyReleased;
         
         public bool this[Keys key] => _keyState.Contains(key);
         
