@@ -19,8 +19,8 @@ namespace TowerDefense.Platform.Glfw
                     throw new Exception("Window failed to create.");
                 }
                 
-                Keyboard = new Keyboard(Handle);
-                Mouse = new Mouse(Handle);
+                Keyboard = new Keyboard(this);
+                Mouse = new Mouse(this);
 
                 GLFW.SetWindowCloseCallback(Handle, WindowCloseCallback);
             }

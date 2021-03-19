@@ -3,38 +3,51 @@ using System.Collections.Generic;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using GlfwWindow = OpenTK.Windowing.GraphicsLibraryFramework.Window;
-using GlfwButton = OpenTK.Windowing.GraphicsLibraryFramework.MouseButton;
 
 namespace TowerDefense.Platform.Glfw
 {
-    public enum MouseButton
-    {
-        Left = 0,
-        Right = 1,
-        Middle = 3,
-        Button1 = 4,
-        Button2 = 5,
-        Button3 = 6,
-        Button4 = 7,
-    }
+    public delegate void MouseButtonEvent();
     
     internal sealed class Mouse
     {
-        private readonly HashSet<MouseButton> _heldButtons;
-
-        internal unsafe Mouse(GlfwWindow* handle)
+        public sealed class Button
         {
-            _heldButtons = new HashSet<MouseButton>();
-            
-            GLFW.SetMouseButtonCallback(handle, MouseButtonCallback);
-            GLFW.SetCursorPosCallback(handle, CursorPosCallback);
-            GLFW.SetScrollCallback(handle, ScrollCallback);
+            public event MouseButtonEvent? Pressed;
+            public event MouseButtonEvent? Released;
+
+            internal void OnPress()
+            {
+                Pressed?.Invoke();
+            }
+
+            internal void OnRelease()
+            {
+                Released?.Invoke();
+            }
         }
+        
+        private readonly Dictionary<MouseButton, Button> _mouseButtons;
+        private readonly Window _window;
 
-        public delegate void MouseButtonEvent(MouseButton button);
-        public event MouseButtonEvent? MouseButtonPressed;
-        public event MouseButtonEvent? MouseButtonReleased;
-
+        internal Mouse(Window window)
+        {
+            _window = window;
+            
+            Array mouseButtonValues = Enum.GetValues(typeof(MouseButton));
+            _mouseButtons = new Dictionary<MouseButton, Button>(mouseButtonValues.Length);
+            foreach (MouseButton value in mouseButtonValues)
+            {
+                _mouseButtons.TryAdd(value, new Button());
+            }
+            
+            unsafe
+            {
+                GLFW.SetMouseButtonCallback(window.Handle, MouseButtonCallback);
+                GLFW.SetCursorPosCallback(window.Handle, CursorPosCallback);
+                GLFW.SetScrollCallback(window.Handle, ScrollCallback);
+            }
+        }
+        
         public delegate void MouseMovedEvent(Vector2 newPosition, Vector2 oldPosition);
         public event MouseMovedEvent? MouseMoved;
         public Vector2 Position { get; private set; }
@@ -43,29 +56,26 @@ namespace TowerDefense.Platform.Glfw
         public event MouseScrollEvent? MouseScroll; 
         public Vector2 Scroll { get; private set; }
         
-        public bool this[MouseButton button] => _heldButtons.Contains(button);
+        public Button this[MouseButton button] => _mouseButtons[button];
 
-        private unsafe void MouseButtonCallback(GlfwWindow* window, GlfwButton button, InputAction action, KeyModifiers mods)
+        private unsafe void MouseButtonCallback(GlfwWindow* window, MouseButton button, InputAction action, KeyModifiers mods)
         {
-            MouseButton mouseButton = (MouseButton) button;
+            Button mouseButton = _mouseButtons[button];
             if (action == InputAction.Press)
             {
-                _heldButtons.Add(mouseButton);
-                
-                MouseButtonPressed?.Invoke(mouseButton);
+                mouseButton.OnPress();
             }
             else if (action == InputAction.Repeat)
             {
-                _heldButtons.Remove(mouseButton);
-                
-                MouseButtonReleased?.Invoke(mouseButton);
+                mouseButton.OnRelease();
             }
         }
 
         private unsafe void CursorPosCallback(GlfwWindow* window, double x, double y)
         {
             Vector2 oldPosition = Position;
-            Position = new Vector2((float)x, (float)y);
+            Vector2i windowSize = _window.Size;
+            Position = new Vector2((float)x / windowSize.X, (float)y / -windowSize.Y + 1);
             MouseMoved?.Invoke(Position, oldPosition);
         }
 

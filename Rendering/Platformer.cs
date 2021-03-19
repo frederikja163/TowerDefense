@@ -22,9 +22,9 @@ namespace TowerDefense.Platform
             return _renderers;
         }
 
-        internal static void InitializeRenderers()
+        internal static void InitializeRenderers(Window window)
         {
-            _renderers[0] = new ClearRenderer();
+            _renderers[0] = new ClearRenderer(window);
             _renderers[1] = new EnemyRenderer();
             _renderers[2] = new TowerRenderer();
         }

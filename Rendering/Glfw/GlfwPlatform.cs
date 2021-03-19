@@ -10,8 +10,6 @@ namespace TowerDefense.Platform.Glfw
     internal sealed class GlfwPlatform : IPlatform
     {
         private readonly Window _window;
-        private readonly Dictionary<Keys, Activity> _keysToActivities;
-        private MovementActivity _towerPlaceActivity;
 
         public GlfwPlatform()
         {
@@ -19,37 +17,18 @@ namespace TowerDefense.Platform.Glfw
             {
                 throw new Exception("GLFW failed to initialize.");
             }
-            _keysToActivities = new Dictionary<Keys, Activity>();
-
             _window = new Window();
-            
-            _window.Keyboard.OnKeyPressed += KeyboardOnKeyPressed;
-            _window.Mouse.MouseButtonPressed += OnMouseButtonPressed;
-        }
-
-        private void OnMouseButtonPressed(MouseButton button)
-        {
-            if (button == MouseButton.Left)
-            {
-                _towerPlaceActivity.Call(new Vector2(_window.Mouse.Position.X / _window.Size.X,
-                    _window.Mouse.Position.Y / -_window.Size.Y + 1));
-            }
-        }
-
-        private void KeyboardOnKeyPressed(Keys key)
-        {
-            if (_keysToActivities.TryGetValue(key, out Activity? activity))
-            {
-                activity.Call();
-            }
         }
 
         public void ImplementActivities(ActivityList activities)
         {
-            _keysToActivities.Add(Keys.Escape, activities[Activities.ExitApplication]);
+            Keyboard keyboard = _window.Keyboard;
+            Mouse mouse = _window.Mouse;
+            
+            keyboard[Keys.Escape].Pressed += activities[Activities.ExitApplication].Call;
             _window.WindowClosed += activities[Activities.ExitApplication].Call;
             
-            _towerPlaceActivity = activities[MovementActivities.PlaceTower];
+            mouse[MouseButton.Left].Pressed += () => activities[MovementActivities.PlaceTower].Call(_window.Mouse.Position);
         }
 
         public void InitializeRendering()
@@ -57,7 +36,7 @@ namespace TowerDefense.Platform.Glfw
             _window.MakeCurrent();
             GLLoader.LoadBindings(new GLFWBindingsContext());
             
-            Platformer.InitializeRenderers();
+            Platformer.InitializeRenderers(_window);
         }
 
         public void PollInput()

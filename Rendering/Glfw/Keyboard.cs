@@ -6,35 +6,61 @@ using GlfwWindow = OpenTK.Windowing.GraphicsLibraryFramework.Window;
 
 namespace TowerDefense.Platform.Glfw
 {
+    public delegate void KeyboardKeyEvent();
     internal sealed class Keyboard
     {
-        private HashSet<Keys> _keyState = new HashSet<Keys>();
-
-        internal unsafe Keyboard(GlfwWindow* handle)
+        public sealed class Key
         {
-            GLFW.SetKeyCallback(handle, KeyCallback);
+            public bool IsDown { get; private set; }
+        
+            public event KeyboardKeyEvent? Pressed;
+            public event KeyboardKeyEvent? Released;
+
+            internal void OnPress()
+            {
+                IsDown = true;
+                Pressed?.Invoke();
+            }
+
+            internal void OnRelease()
+            {
+                IsDown = false;
+                Released?.Invoke();
+            }
         }
         
-        public delegate void KeyEvent(Keys key);
-        public event KeyEvent? OnKeyPressed;
-        public event KeyEvent? OnKeyReleased;
-        
-        public bool this[Keys key] => _keyState.Contains(key);
-        
-        private unsafe void KeyCallback(GlfwWindow* window, Keys key, int code, InputAction action, KeyModifiers mods)
+        private Dictionary<Keys, Key> _keys;
+        private readonly Window _window;
+
+        internal Keyboard(Window window)
         {
-            switch (action)
+            _window = window;
+            
+            Array keyValues = Enum.GetValues(typeof(Keys));
+            _keys = new Dictionary<Keys, Key>(keyValues.Length);
+            foreach (Keys value in keyValues)
             {
-                case InputAction.Press:
-                    _keyState.Add(key);
-                    OnKeyPressed?.Invoke(key);
-                    break;
-                case InputAction.Release:
-                    _keyState.Remove(key);
-                    OnKeyReleased?.Invoke(key);
-                    break;
-                default:
-                    break;
+                _keys.TryAdd(value, new Key());
+            }
+            
+            unsafe
+            {
+                GLFW.SetKeyCallback(window.Handle, KeyCallback);
+            }
+        }
+        
+        public Key this[Keys key] => _keys[key];
+        
+        private unsafe void KeyCallback(GlfwWindow* window, Keys keyRaw, int code, InputAction action, KeyModifiers mods)
+        {
+            Key key = _keys[keyRaw];
+            if (action == InputAction.Press)
+            {
+                key.OnPress();
+            }
+            else if (action == InputAction.Release)
+            {
+                key.OnRelease();
             }
         }
     }
