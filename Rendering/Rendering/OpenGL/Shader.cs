@@ -108,7 +108,7 @@ namespace TowerDefense.Platform.Rendering.OpenGL
         public void SetUniform(int location, Vector4i value) => GL.ProgramUniform4i(Handle, location, value.X, value.Y, value.Z, value.W);
         
         public void SetUniform(int location, Matrix4 value)
-            => GL.ProgramUniformMatrix4fv(Handle, location, 1, false, value.M11);
+            => GL.ProgramUniformMatrix4fv(Handle, location, 1, false, value.Row0.X);
         
         public void Dispose()
         {
