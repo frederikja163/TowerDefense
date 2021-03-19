@@ -24,7 +24,7 @@ namespace TowerDefense.Platform
 
         internal static void InitializeRenderers()
         {
-            _renderers[0] = new TestTriangleRenderer();
+            _renderers[0] = new EnemyRenderer();
         }
     }
 }

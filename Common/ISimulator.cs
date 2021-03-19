@@ -1,4 +1,6 @@
-﻿namespace TowerDefense.Common
+﻿using TowerDefense.Common.Game;
+
+namespace TowerDefense.Common
 {
     public interface ISimulator
     {

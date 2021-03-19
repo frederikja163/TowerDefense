@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using TowerDefense.Common;
+using TowerDefense.Common.Game;
 using TowerDefense.Platform;
 using TowerDefense.Simulation;
 
@@ -17,7 +19,7 @@ namespace TowerDefense
 
         public Application()
         {
-            _game = new GameData();
+            _game = new GameData(new ImmutableArray<Enemy>());
 
             _platform = Platformer.GetPlatform();
 

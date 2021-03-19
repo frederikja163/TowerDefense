@@ -13,7 +13,7 @@ namespace TowerDefense.Simulation
         {
             return new ISimulator[]
             {
-
+                new EnemySimulator(),
             };
         }
     }
