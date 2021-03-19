@@ -134,9 +134,9 @@ namespace TowerDefense.Platform.Glfw
     {
         private HashSet<Key> _keyState = new HashSet<Key>();
 
-        internal unsafe Keyboard(GlfwWindow* window)
+        internal unsafe Keyboard(Window window)
         {
-            GLFW.SetKeyCallback(window, KeyCallback);
+            GLFW.SetKeyCallback(window.Handle, KeyCallback);
         }
         
         public delegate void KeyEvent(Key key);

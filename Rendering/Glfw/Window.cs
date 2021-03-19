@@ -7,16 +7,18 @@ namespace TowerDefense.Platform.Glfw
 {
     internal sealed class Window : IDisposable
     {
-        private readonly unsafe GlfwWindow* _handle;
+        internal readonly unsafe GlfwWindow* Handle;
         
         public Window()
         {
             unsafe
             {
-                _handle = GLFW.CreateWindow(800, 600, "Tower Defensé", null, null);
-                Keyboard = new Keyboard(_handle);
+                Handle = GLFW.CreateWindow(800, 600, "Tower Defensé", null, null);
+                
+                Keyboard = new Keyboard(this);
+                Mouse = new Mouse(this);
 
-                if (_handle == null)
+                if (Handle == null)
                 {
                     throw new Exception("Window failed to create.");
                 }
@@ -24,12 +26,13 @@ namespace TowerDefense.Platform.Glfw
         }
         
         public Keyboard Keyboard { get; }
+        public Mouse Mouse { get; }
 
         public void MakeCurrent()
         {
             unsafe
             {
-                GLFW.MakeContextCurrent(_handle);
+                GLFW.MakeContextCurrent(Handle);
             }
         }
 
@@ -37,7 +40,7 @@ namespace TowerDefense.Platform.Glfw
         {
             unsafe
             {
-                GLFW.SwapBuffers(_handle);
+                GLFW.SwapBuffers(Handle);
             }
         }
 
@@ -47,7 +50,7 @@ namespace TowerDefense.Platform.Glfw
             {
                 unsafe
                 {
-                    GLFW.GetWindowSize(_handle, out int width, out int height);
+                    GLFW.GetWindowSize(Handle, out int width, out int height);
                     return new Vector2i(width, height);
                 }
             }
@@ -55,7 +58,7 @@ namespace TowerDefense.Platform.Glfw
             {
                 unsafe
                 {
-                    GLFW.SetWindowSize(_handle, value.X, value.Y);
+                    GLFW.SetWindowSize(Handle, value.X, value.Y);
                 }
             }
         }
@@ -96,7 +99,7 @@ namespace TowerDefense.Platform.Glfw
         {
             unsafe
             {
-                GLFW.DestroyWindow(_handle);
+                GLFW.DestroyWindow(Handle);
             }
         }
     }
