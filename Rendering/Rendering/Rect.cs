@@ -6,7 +6,7 @@ using TowerDefense.Platform.Rendering.OpenGL;
 
 namespace TowerDefense.Platform.Rendering
 {
-    internal sealed class Quad
+    public sealed class Rect
     {
         private static BufferObject<float> Vbo;
         private static BufferObject<uint> Ebo;
@@ -14,14 +14,14 @@ namespace TowerDefense.Platform.Rendering
         private static ShaderProgram Shader;
         private static int ModelLocation;
 
-        static Quad()
+        static Rect()
         {
             Vbo = new BufferObject<float>(
                 new[] {
-                    0.5f,  0.5f, 0,
-                    0.5f, -0.5f, 0,
-                    -0.5f, -0.5f, 0,
-                    -0.5f,  0.5f, 0,
+                    0.5f,  0.5f,
+                    0.5f, -0.5f,
+                    -0.5f, -0.5f,
+                    -0.5f,  0.5f,
                 });
 
             Ebo = new BufferObject<uint>(new uint[]
@@ -32,13 +32,13 @@ namespace TowerDefense.Platform.Rendering
 
             using VertexShader vertex = new VertexShader(@"
             #version 330 core
-            in vec3 vPosition;
+            in vec2 vPosition;
 
             uniform mat4 uModel;
 
             void main()
             {
-                gl_Position = uModel * vec4(vPosition, 1);
+                gl_Position = (uModel * vec4(vPosition, 0, 1)) * vec4(2, 2, 1, 1) + vec4(-1, -1, 0, 0);
             }");
 
             using FragmentShader fragment = new FragmentShader(@"
@@ -55,15 +55,15 @@ namespace TowerDefense.Platform.Rendering
             ModelLocation = Shader.GetUniformLocation("uModel");
 
             Vao = new VertexArray(Ebo);
-            Vao.AddVertexBuffer(Vbo, sizeof(float) * 3);
-            Vao.AddVertexAttribute(Vbo, Shader.GetAttributeLocation("vPosition"), 3, VertexAttribType.Float, 0);
+            Vao.AddVertexBuffer(Vbo, sizeof(float) * 2);
+            Vao.AddVertexAttribute(Vbo, Shader.GetAttributeLocation("vPosition"), 2, VertexAttribType.Float, 0);
         }
         
-        public Transform3D Transform { get; }
+        public Transform2D Transform { get; }
         
-        public Quad()
+        public Rect()
         {
-            Transform = new Transform3D();
+            Transform = new Transform2D();
         }
 
         public void Render()
