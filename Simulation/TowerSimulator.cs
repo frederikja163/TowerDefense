@@ -7,8 +7,7 @@ namespace TowerDefense.Simulation
 {
     internal sealed class TowerSimulator : ISimulator
     {
-        private bool _shouldCreateTower = false;
-        private Vector2 _towerPosition;
+        private Vector2? _towerPosition;
         
         public TowerSimulator(ActivityList activities)
         {
@@ -17,16 +16,15 @@ namespace TowerDefense.Simulation
 
         private void OnPlaceTower(MovementActivities activities, Vector2 position)
         {
-            _shouldCreateTower = true;
             _towerPosition = position;
         }
 
         public GameData Tick(in GameData game)
         {
-            if (_shouldCreateTower)
+            if (_towerPosition != null)
             {
-                _shouldCreateTower = false;
-                ImmutableArray<Tower> towers = game.Towers.Add(new Tower(_towerPosition));
+                ImmutableArray<Tower> towers = game.Towers.Add(new Tower(_towerPosition.Value));
+                _towerPosition = null;
 
                 return game with {Towers = towers};
             }
