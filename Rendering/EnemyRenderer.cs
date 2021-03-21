@@ -13,7 +13,7 @@ namespace TowerDefense.Platform
         
         public EnemyRenderer()
         {
-            _rect = new Rect();
+            _rect = new Rect(Color4.Blue);
             _rect.Transform.Scale = Vector2.One * 0.1f;
         }
 

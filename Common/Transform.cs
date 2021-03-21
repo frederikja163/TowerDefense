@@ -19,5 +19,16 @@ namespace TowerDefense.Common
         public Vector2 Scale { get; set; } = Vector2.One;
         
         public float Rotation { get; set; } = 0;
+
+        public Transform2D()
+        {
+            
+        }
+        
+        public Transform2D(Vector2 position, Vector2 scale)
+        {
+            Position = position;
+            Scale = scale;
+        }
     }
 }

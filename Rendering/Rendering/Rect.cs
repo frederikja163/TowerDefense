@@ -1,5 +1,6 @@
 using System;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using TowerDefense.Common;
 using TowerDefense.Platform.Extensions;
 using TowerDefense.Platform.Rendering.OpenGL;
@@ -13,6 +14,7 @@ namespace TowerDefense.Platform.Rendering
         private static VertexArray Vao;
         private static ShaderProgram Shader;
         private static int ModelLocation;
+        private static int ColorLocation;
 
         static Rect()
         {
@@ -45,30 +47,46 @@ namespace TowerDefense.Platform.Rendering
             #version 330 core
             out vec4 Color;
 
+            uniform vec4 uColor;
+
             void main()
             {
-                Color = vec4(1, 1, 1, 1);
+                Color = uColor;
             }
             ");
             Shader = new ShaderProgram(vertex, fragment);
             
             ModelLocation = Shader.GetUniformLocation("uModel");
+            ColorLocation = Shader.GetUniformLocation("uColor");
 
             Vao = new VertexArray(Ebo);
             Vao.AddVertexBuffer(Vbo, sizeof(float) * 2);
             Vao.AddVertexAttribute(Vbo, Shader.GetAttributeLocation("vPosition"), 2, VertexAttribType.Float, 0);
         }
+
+        public Transform2D Transform { get; } = new Transform2D();
         
-        public Transform2D Transform { get; }
+        public Color4<Rgba> Color { get; } = Color4.White;
         
         public Rect()
         {
-            Transform = new Transform2D();
+        }
+
+        public Rect(Color4<Rgba> color)
+        {
+            Color = color;
+        }
+
+        public Rect(Vector2 position, Vector2 scale, Color4<Rgba> color)
+        {
+            Color = color;
+            Transform = new Transform2D(position, scale);
         }
 
         public void Render()
         {
             Shader.SetUniform(ModelLocation, Transform.GetMatrix());
+            Shader.SetUniform(ColorLocation, Color);
             
             Shader.Bind();
             Vao.Bind();
