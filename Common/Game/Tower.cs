@@ -6,4 +6,9 @@ namespace TowerDefense.Common.Game
     {
         
     }
+
+    public record DraggableTower (Vector2 Position)
+    {
+        
+    }
 }

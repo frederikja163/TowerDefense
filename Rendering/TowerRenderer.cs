@@ -17,10 +17,17 @@ namespace TowerDefense.Platform
         
         public void Render(in GameData game)
         {
+            DraggableTower dragTower = game.DragTower;
+            
+            if (dragTower != null)
+            {
+                _rect.Transform.Position = dragTower.Position;
+                _rect.Render();
+            }
+            
             foreach (Tower tower in game.Towers)
             {
                 _rect.Transform.Position = tower.Position;
-                
                 _rect.Render();
             }
         }

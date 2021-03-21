@@ -20,7 +20,7 @@ namespace TowerDefense
 
         public Application()
         {
-            _game = new GameData(ImmutableArray<Enemy>.Empty, ImmutableArray<Tower>.Empty);
+            _game = new GameData(ImmutableArray<Enemy>.Empty, ImmutableArray<Tower>.Empty, null);
 
             _platform = Platformer.GetPlatform();
 

@@ -48,11 +48,11 @@ namespace TowerDefense.Platform.Glfw
             }
         }
         
-        public delegate void MouseMovedEvent(Vector2 newPosition, Vector2 oldPosition);
+        public delegate void MouseMovedEvent(Vector2 newPosition);
         public event MouseMovedEvent? MouseMoved;
         public Vector2 Position { get; private set; }
         
-        public delegate void MouseScrollEvent(Vector2 newScroll, Vector2 oldScroll);
+        public delegate void MouseScrollEvent(Vector2 newScroll);
         public event MouseScrollEvent? MouseScroll; 
         public Vector2 Scroll { get; private set; }
         
@@ -65,7 +65,7 @@ namespace TowerDefense.Platform.Glfw
             {
                 mouseButton.OnPress();
             }
-            else if (action == InputAction.Repeat)
+            else if (action == InputAction.Release)
             {
                 mouseButton.OnRelease();
             }
@@ -76,7 +76,7 @@ namespace TowerDefense.Platform.Glfw
             Vector2 oldPosition = Position;
             Vector2i windowSize = _window.Size;
             Position = new Vector2((float)x / windowSize.X, (float)y / -windowSize.Y + 1);
-            MouseMoved?.Invoke(Position, oldPosition);
+            MouseMoved?.Invoke(Position);
         }
 
         private unsafe void ScrollCallback(GlfwWindow* window, double offsetx, double offsety)
@@ -85,7 +85,7 @@ namespace TowerDefense.Platform.Glfw
             // For now we assume total scroll, like with the cursor position.
             Vector2 oldScroll = Scroll;
             Scroll = new Vector2((float) offsetx, (float) offsety);
-            MouseScroll?.Invoke(Scroll, oldScroll);
+            MouseScroll?.Invoke(Scroll);
         }
     }
 }

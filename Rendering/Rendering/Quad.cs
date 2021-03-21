@@ -1,5 +1,6 @@
 using System;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using TowerDefense.Common;
 using TowerDefense.Platform.Extensions;
 using TowerDefense.Platform.Rendering.OpenGL;
@@ -45,9 +46,11 @@ namespace TowerDefense.Platform.Rendering
             #version 330 core
             out vec4 Color;
 
+            uniform vec4 uColor;
+
             void main()
             {
-                Color = vec4(1, 1, 1, 1);
+                Color = uColor; // vec4(0.0f, 1.0f, 0.0f, 1.0f);
             }
             ");
             Shader = new ShaderProgram(vertex, fragment);
@@ -57,6 +60,7 @@ namespace TowerDefense.Platform.Rendering
             Vao = new VertexArray(Ebo);
             Vao.AddVertexBuffer(Vbo, sizeof(float) * 3);
             Vao.AddVertexAttribute(Vbo, Shader.GetAttributeLocation("vPosition"), 3, VertexAttribType.Float, 0);
+            Vao.AddVertexAttribute(Vbo, Shader.GetAttributeLocation("Color"), 2, VertexAttribType.Float, 0); // Nut work
         }
         
         public Transform3D Transform { get; }
@@ -69,6 +73,7 @@ namespace TowerDefense.Platform.Rendering
         public void Render()
         {
             Shader.SetUniform(ModelLocation, Transform.GetMatrix());
+            Shader.SetUniform(Shader.GetAttributeLocation("uColor"), new Vector4(0.0f, 1.0f, 0.0f, 1.0f)); // fix
             
             Shader.Bind();
             Vao.Bind();
