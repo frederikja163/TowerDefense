@@ -2,7 +2,10 @@
 
 namespace TowerDefense.Common.Game
 {
-    public record GameData (ImmutableArray<Enemy> Enemies, ImmutableArray<Tower> Towers)
+    public record GameData (ImmutableArray<Enemy> Enemies,
+        ImmutableArray<Tower> Towers,
+        ImmutableArray<Projectile> Projectiles,
+        int Tick)
     {
     }
 }

@@ -2,7 +2,7 @@ using OpenTK.Mathematics;
 
 namespace TowerDefense.Common.Game
 {
-    public record Tower (Vector2 Position, int TickForNextShot)
+    public record Projectile (Vector2 Position, Vector2 Velocity)
     {
         
     }

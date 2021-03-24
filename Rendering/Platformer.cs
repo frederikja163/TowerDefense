@@ -10,7 +10,7 @@ namespace TowerDefense.Platform
 {
     public static class Platformer
     {
-        private static IRenderer[] _renderers = new IRenderer[3];
+        private static IRenderer[] _renderers = new IRenderer[4];
         
         public static IPlatform GetPlatform()
         {
@@ -27,6 +27,7 @@ namespace TowerDefense.Platform
             _renderers[0] = new ClearRenderer(window);
             _renderers[1] = new EnemyRenderer();
             _renderers[2] = new TowerRenderer();
+            _renderers[3] = new ProjectileRenderer();
         }
     }
 }

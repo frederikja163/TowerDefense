@@ -20,7 +20,12 @@ namespace TowerDefense
 
         public Application()
         {
-            _game = new GameData(ImmutableArray<Enemy>.Empty, ImmutableArray<Tower>.Empty);
+            _game = new GameData(
+                ImmutableArray<Enemy>.Empty,
+                ImmutableArray<Tower>.Empty,
+                ImmutableArray<Projectile>.Empty,
+                0
+                );
 
             _platform = Platformer.GetPlatform();
 
@@ -46,11 +51,12 @@ namespace TowerDefense
             {
                 _platform.PollInput();
 
+                _game = _game with {Tick = _game.Tick + 1};
                 foreach (ISimulator simulator in _simulators)
                 {
                     _game = simulator.Tick(_game);
                 }
-                Thread.Sleep(1000/60);
+                Thread.Sleep(1000/20);
 
                 foreach (IRenderer renderer in _renderers)
                 {

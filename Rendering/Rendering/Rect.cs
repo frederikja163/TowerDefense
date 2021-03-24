@@ -76,7 +76,7 @@ namespace TowerDefense.Platform.Rendering
         {
             Color = color;
         }
-
+        
         public Rect(Vector2 position, Vector2 scale, Color4<Rgba> color)
         {
             Color = color;
