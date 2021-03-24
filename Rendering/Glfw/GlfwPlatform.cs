@@ -28,7 +28,9 @@ namespace TowerDefense.Platform.Glfw
             keyboard[Keys.Escape].Pressed += activities[Activities.ExitApplication].Call;
             _window.WindowClosed += activities[Activities.ExitApplication].Call;
             
-            mouse[MouseButton.Left].Pressed += () => activities[MovementActivities.PlaceTower].Call(_window.Mouse.Position);
+            mouse[MouseButton.Left].Released += activities[Activities.PlaceTower].Call;
+            mouse[MouseButton.Left].Pressed += activities[Activities.BeginTower].Call;
+            mouse.MouseMoved += (position) => activities[MovementActivities.DragTower].Call(position);
         }
 
         public void InitializeRendering()

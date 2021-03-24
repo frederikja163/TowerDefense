@@ -7,10 +7,12 @@ namespace TowerDefense.Common
     public enum Activities
     {
         ExitApplication,
+        BeginTower,
+        PlaceTower,
     }
     public enum MovementActivities
     {
-        PlaceTower,
+        DragTower,
     }
 
     public delegate void ActivityEvent(Activities activities);

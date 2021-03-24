@@ -24,6 +24,7 @@ namespace TowerDefense
                 ImmutableArray<Enemy>.Empty,
                 ImmutableArray<Tower>.Empty,
                 ImmutableArray<Projectile>.Empty,
+                null,
                 0
                 );
 
