@@ -8,6 +8,7 @@ namespace TowerDefense.Simulation
 {
     internal sealed class TowerSimulator : ISimulator
     {
+        private const float TowerDiameter = 0.1f;
         private Vector2? _towerPosition;
         private bool _placeTower;
         private DraggableTower _dragTower;
@@ -28,7 +29,7 @@ namespace TowerDefense.Simulation
         private void OnDragTower(MovementActivities activities, Vector2 position)
         {
             _towerPosition = position;
-            _dragTower = new DraggableTower(_towerPosition.Value, 0.1f, false);
+            _dragTower = new DraggableTower(_towerPosition.Value, false);
         }
 
         public GameData Tick(in GameData game)
@@ -45,7 +46,7 @@ namespace TowerDefense.Simulation
                     Vector2 distance = new Vector2(Math.Abs(_dragTower.Position.X - tower.Position.X),
                         Math.Abs(_dragTower.Position.Y - tower.Position.Y));
                     
-                    if (Math.Sqrt(distance.X * distance.X + distance.Y * distance.Y) < _dragTower.Radius + tower.Radius)
+                    if (distance.X * distance.X + distance.Y * distance.Y < TowerDiameter * TowerDiameter)
                     {
                         _towerOverlap = true;
                         break;
@@ -59,7 +60,7 @@ namespace TowerDefense.Simulation
             
             if (_placeTower && !_towerOverlap)
             {
-                ImmutableArray<Tower> towers = game.Towers.Add(new Tower(_towerPosition.Value, 0.1f));
+                ImmutableArray<Tower> towers = game.Towers.Add(new Tower(_towerPosition.Value, game.Tick));
                 _towerPosition = null;
                 _placeTower = false;
 
