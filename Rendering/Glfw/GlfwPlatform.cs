@@ -29,8 +29,14 @@ namespace TowerDefense.Platform.Glfw
             _window.WindowClosed += activities[Activities.ExitApplication].Call;
             
             mouse[MouseButton.Left].Released += activities[Activities.PlaceTower].Call;
-            mouse[MouseButton.Left].Pressed += activities[Activities.BeginTower].Call;
-            mouse.MouseMoved += (position) => activities[MovementActivities.DragTower].Call(position);
+            mouse[MouseButton.Left].Pressed += () => activities[MovementActivities.DragTower].Call(mouse.Position);
+            mouse.MouseMoved += (position) =>
+            {
+                if (mouse[MouseButton.Left].IsDown)
+                {
+                    activities[MovementActivities.DragTower].Call(position);
+                }
+            };
         }
 
         public void InitializeRendering()

@@ -14,6 +14,7 @@ namespace TowerDefense.Platform.Glfw
         {
             public event MouseButtonEvent? Pressed;
             public event MouseButtonEvent? Released;
+            public bool IsDown { get; set; }
 
             internal void OnPress()
             {
@@ -63,10 +64,12 @@ namespace TowerDefense.Platform.Glfw
             Button mouseButton = _mouseButtons[button];
             if (action == InputAction.Press)
             {
+                mouseButton.IsDown = true;
                 mouseButton.OnPress();
             }
             else if (action == InputAction.Release)
             {
+                mouseButton.IsDown = false;
                 mouseButton.OnRelease();
             }
         }
