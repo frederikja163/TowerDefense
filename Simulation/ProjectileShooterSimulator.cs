@@ -10,7 +10,6 @@ namespace TowerDefense.Simulation
         public GameData Tick(in GameData game)
         {
             int tick = game.Tick;
-            bool changedGame = false;
             ImmutableArray<Tower> towers = game.Towers;
             ImmutableArray<Projectile> projectiles = game.Projectiles;
 
@@ -29,27 +28,17 @@ namespace TowerDefense.Simulation
 
                     towersBuilder[i] = tower with {TickForNextShot = tower.TickForNextShot + 60};
                     projectilesBuilder!.Add(new Projectile(tower.Position, Vector2.UnitX * 0.05f));
-                    changedGame = true;
                 }
             }
 
-            if (changedGame)
+            // If a tower has been updated we need to return the new towers.
+            if (towersBuilder == null)
             {
-                if (towersBuilder != null)
+                return game with
                 {
-                    return game with
-                    {
-                        Towers = towersBuilder.ToImmutable(),
-                        Projectiles = projectilesBuilder!.ToImmutable(),
-                    };
-                }
-                else
-                {
-                    return game with
-                    {
-                        Towers = towers,
-                    };
-                }
+                    Towers = towersBuilder.ToImmutable(),
+                    Projectiles = projectilesBuilder!.ToImmutable(),
+                };
             }
             else
             {
