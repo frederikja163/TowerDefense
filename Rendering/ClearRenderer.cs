@@ -12,6 +12,9 @@ namespace TowerDefense.Platform
         public ClearRenderer(Window window)
         {
             _window = window;
+            GL.Enable(EnableCap.AlphaTest);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         }
 
         public void Render(in GameData game)

@@ -66,7 +66,7 @@ namespace TowerDefense.Platform.Rendering
 
         public Transform2D Transform { get; } = new Transform2D();
         
-        public Color4<Rgba> Color { get; } = Color4.White;
+        public Color4<Rgba> Color { get; set; } = Color4.White;
         
         public Rect()
         {

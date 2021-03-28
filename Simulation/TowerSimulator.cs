@@ -2,6 +2,7 @@ using System;
 using System.Collections.Immutable;
 using OpenTK.Mathematics;
 using TowerDefense.Common;
+using TowerDefense.Common.Extensions;
 using TowerDefense.Common.Game;
 
 namespace TowerDefense.Simulation
@@ -11,8 +12,6 @@ namespace TowerDefense.Simulation
         private const float TowerDiameter = 0.1f;
         private Vector2? _towerPosition;
         private bool _placeTower;
-        private DraggableTower _dragTower;
-        private bool _towerOverlap = false;
         
         public TowerSimulator(ActivityList activities)
         {
@@ -23,51 +22,53 @@ namespace TowerDefense.Simulation
         private void OnPlaceTower(Activities activities)
         {
             _placeTower = true;
-            _dragTower = null;
         }
 
         private void OnDragTower(MovementActivities activities, Vector2 position)
         {
             _towerPosition = position;
-            _dragTower = new DraggableTower(_towerPosition.Value, false);
         }
 
         public GameData Tick(in GameData game)
         {
+            ImmutableArray<Tower> towers = game.Towers;
+            DraggableTower dragTower = game.DragTower;
+            
             if (_towerPosition == null)
             {
+                if (dragTower == null)
+                {
+                    return game;
+                }
                 return game with {DragTower = null};
             }
             
-            if (_dragTower != null)
+            bool overloap = towers.CheckForCollision(_towerPosition.Value, TowerDiameter);
+            if (dragTower == null)
             {
-                foreach (Tower tower in game.Towers)
+                dragTower = new DraggableTower(_towerPosition.Value, overloap);
+            }
+            else
+            {
+                dragTower = dragTower with
                 {
-                    Vector2 distance = new Vector2(Math.Abs(_dragTower.Position.X - tower.Position.X),
-                        Math.Abs(_dragTower.Position.Y - tower.Position.Y));
-                    
-                    if (distance.X * distance.X + distance.Y * distance.Y < TowerDiameter * TowerDiameter)
-                    {
-                        _towerOverlap = true;
-                        break;
-                    }
-                    else
-                    {
-                        _towerOverlap = false;
-                    }
-                }
+                    Overlap = overloap,
+                    Position = _towerPosition.Value
+                };
             }
-            
-            if (_placeTower && !_towerOverlap)
+
+            if (_placeTower)
             {
-                ImmutableArray<Tower> towers = game.Towers.Add(new Tower(_towerPosition.Value, game.Tick));
-                _towerPosition = null;
+                if (!dragTower.Overlap)
+                {
+                    towers = game.Towers.Add(new Tower(_towerPosition.Value, game.Tick));
+                }
                 _placeTower = false;
+                _towerPosition = null;
 
-                return game with {Towers = towers, DragTower = _dragTower};
+                return game with {Towers = towers, DragTower = null};
             }
-
-            return game with {DragTower = _dragTower};
+            return game with {DragTower = dragTower};
         }
     }
 }
