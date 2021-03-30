@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Threading;
 using TowerDefense.Common;
 using TowerDefense.Common.Game;
@@ -48,6 +50,10 @@ namespace TowerDefense
         public void Run()
         {
             _platform.InitializeRendering();
+            // TODO: Move performance measurements to a debug screen of some kind.
+            int frames = 0;
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
             while (_isRunning)
             {
                 _platform.PollInput();
@@ -57,11 +63,20 @@ namespace TowerDefense
                 {
                     _game = simulator.Tick(_game);
                 }
+                watch.Stop();
                 Thread.Sleep(1000/20);
+                watch.Start();
 
                 foreach (IRenderer renderer in _renderers)
                 {
                     renderer.Render(_game);
+                }
+
+                if (frames++ >= 100)
+                {
+                    frames = 0;
+                    Console.WriteLine(watch.ElapsedTicks / (float)Stopwatch.Frequency * 1000);
+                    watch.Restart();
                 }
             }
         }
