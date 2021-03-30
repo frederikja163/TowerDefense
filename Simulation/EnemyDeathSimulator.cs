@@ -16,7 +16,7 @@ namespace TowerDefense.Simulation
             ImmutableArray<Enemy>.Builder enemyBuilder = game.Enemies.ToBuilder();
             ImmutableArray<Projectile>.Builder projectileBuilder = game.Projectiles.ToBuilder();
 
-            for (var i = projectileBuilder.Count - 1; i >= 0; i--)
+            for (int i = projectileBuilder.Count - 1; i >= 0; i--)
             {
                 Projectile projectile = projectileBuilder[i];
                 if (enemyBuilder.CheckForCollision(projectile.Position, 0.05f, out _, out int enemyIndex))
