@@ -29,6 +29,9 @@ namespace TowerDefense.Platform.Glfw
         
         private readonly Dictionary<MouseButton, Button> _mouseButtons;
         private readonly Window _window;
+        private readonly GLFWCallbacks.MouseButtonCallback _mouseButtonCallback;
+        private readonly GLFWCallbacks.CursorPosCallback _cursorPosCallback;
+        private readonly GLFWCallbacks.ScrollCallback _scrollCallback;
 
         internal Mouse(Window window)
         {
@@ -43,9 +46,13 @@ namespace TowerDefense.Platform.Glfw
             
             unsafe
             {
-                GLFW.SetMouseButtonCallback(window.Handle, MouseButtonCallback);
-                GLFW.SetCursorPosCallback(window.Handle, CursorPosCallback);
-                GLFW.SetScrollCallback(window.Handle, ScrollCallback);
+                _mouseButtonCallback = MouseButtonCallback;
+                _cursorPosCallback = CursorPosCallback;
+                _scrollCallback = ScrollCallback;
+                
+                GLFW.SetMouseButtonCallback(window.Handle, _mouseButtonCallback);
+                GLFW.SetCursorPosCallback(window.Handle, _cursorPosCallback);
+                GLFW.SetScrollCallback(window.Handle, _scrollCallback);
             }
         }
         

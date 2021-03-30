@@ -8,6 +8,7 @@ namespace TowerDefense.Platform.Glfw
     internal sealed class Window : IDisposable
     {
         internal readonly unsafe GlfwWindow* Handle;
+        private readonly GLFWCallbacks.WindowCloseCallback _windowCloseCallback;
         
         public Window()
         {
@@ -22,7 +23,8 @@ namespace TowerDefense.Platform.Glfw
                 Keyboard = new Keyboard(this);
                 Mouse = new Mouse(this);
 
-                GLFW.SetWindowCloseCallback(Handle, WindowCloseCallback);
+                _windowCloseCallback = WindowCloseCallback;
+                GLFW.SetWindowCloseCallback(Handle, _windowCloseCallback);
             }
         }
 

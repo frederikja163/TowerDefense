@@ -31,6 +31,7 @@ namespace TowerDefense.Platform.Glfw
         
         private Dictionary<Keys, Key> _keys;
         private readonly Window _window;
+        private readonly GLFWCallbacks.KeyCallback _keyCallback;
 
         internal Keyboard(Window window)
         {
@@ -45,7 +46,8 @@ namespace TowerDefense.Platform.Glfw
             
             unsafe
             {
-                GLFW.SetKeyCallback(window.Handle, KeyCallback);
+                _keyCallback = KeyCallback;
+                GLFW.SetKeyCallback(window.Handle, _keyCallback);
             }
         }
         
