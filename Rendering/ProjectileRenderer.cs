@@ -15,9 +15,9 @@ namespace TowerDefense.Platform
             _rect = new Rect(Vector2.Zero, Vector2.One * 0.01f, Color4.Green);
         }
 
-        public void Render(in GameData game)
+        public void Render(in GameData lastTick, in GameData nextTick, float percentage)
         {
-            ImmutableArray<Projectile> projectiles = game.Projectiles;
+            ImmutableArray<Projectile> projectiles = nextTick.Projectiles;
 
             foreach (Projectile projectile in projectiles)
             {

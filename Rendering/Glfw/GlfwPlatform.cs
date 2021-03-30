@@ -43,16 +43,19 @@ namespace TowerDefense.Platform.Glfw
         {
             _window.MakeCurrent();
             GLLoader.LoadBindings(new GLFWBindingsContext());
+            GLFW.SwapInterval(0);
             
             Platformer.InitializeRenderers(_window);
         }
 
         public void PollInput()
         {
-            // TODO: This should not be called from poll input.
-            _window.SwapBuffers();
-            
             GLFW.PollEvents();
+        }
+
+        public void SwapBuffers()
+        {
+            _window.SwapBuffers();
         }
 
         public void Dispose()

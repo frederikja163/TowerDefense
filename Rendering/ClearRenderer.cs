@@ -17,7 +17,7 @@ namespace TowerDefense.Platform
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         }
 
-        public void Render(in GameData game)
+        public void Render(in GameData lastTick, in GameData nextTick, float percentage)
         {
             GL.Viewport(0, 0, _window.Width, _window.Height);
             GL.Clear(ClearBufferMask.ColorBufferBit);

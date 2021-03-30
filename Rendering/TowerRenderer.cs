@@ -20,10 +20,10 @@ namespace TowerDefense.Platform
             _dragableRect.Transform.Scale = Vector2.One * 0.1f;
         }
         
-        public void Render(in GameData game)
+        public void Render(in GameData lastTick, in GameData nextTick, float percentage)
         {
-            ImmutableArray<Tower> towers = game.Towers;
-            DraggableTower dragTower = game.DragTower;
+            ImmutableArray<Tower> towers = nextTick.Towers;
+            DraggableTower? dragTower = nextTick.DragTower;
 
             foreach (Tower tower in towers)
             {

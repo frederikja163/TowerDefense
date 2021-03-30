@@ -19,6 +19,8 @@ namespace TowerDefense
 
         private GameData _game;
         private bool _isRunning = true;
+        private long _millisecondsAtLastUpdate;
+        private readonly Stopwatch _gameWatch;
 
         public Application()
         {
@@ -27,9 +29,9 @@ namespace TowerDefense
                 ImmutableArray<Tower>.Empty,
                 ImmutableArray<Projectile>.Empty,
                 null,
-                0
-                );
+                0);
 
+            _gameWatch = new Stopwatch();
             _platform = Platformer.GetPlatform();
 
             _renderers = Platformer.GetRenderers();
@@ -49,35 +51,59 @@ namespace TowerDefense
 
         public void Run()
         {
-            _platform.InitializeRendering();
-            // TODO: Move performance measurements to a debug screen of some kind.
-            int frames = 0;
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
+            _gameWatch.Start();
+            Thread simulationThread = new Thread(SimulationThreadRun);
+            simulationThread.Start();
+            Thread renderingThread = new Thread(RenderingThreadRun);
+            renderingThread.Start();
+            
             while (_isRunning)
             {
                 _platform.PollInput();
+            }
+            _gameWatch.Stop();
+        }
 
-                _game = _game with {Tick = _game.Tick + 1};
-                foreach (ISimulator simulator in _simulators)
+        private void RenderingThreadRun()
+        {
+            _platform.InitializeRendering();
+            GameData lastTick = _game;
+            GameData nextTick = _game;
+            while (_isRunning)
+            {
+                lock (_game)
                 {
-                    _game = simulator.Tick(_game);
+                    lastTick = nextTick;
+                    nextTick = _game;
                 }
-                watch.Stop();
-                Thread.Sleep(1000/20);
-                watch.Start();
 
+                float percentage =
+                    ((_gameWatch.ElapsedTicks / (1000 * Stopwatch.Frequency)) - _millisecondsAtLastUpdate) / 50f;
                 foreach (IRenderer renderer in _renderers)
                 {
-                    renderer.Render(_game);
+                    renderer.Render(lastTick, nextTick, percentage);
+                }
+                _platform.SwapBuffers();
+            }
+        }
+
+        private void SimulationThreadRun()
+        {
+            while (_isRunning)
+            {
+                GameData intermidiateData = _game with {Tick = _game.Tick + 1};
+                foreach (ISimulator simulator in _simulators)
+                {
+                    intermidiateData = simulator.Tick(intermidiateData);
                 }
 
-                if (frames++ >= 100)
+                long msAtLastUpdate = _gameWatch.ElapsedTicks / (1000 * Stopwatch.Frequency);
+                lock (_game)
                 {
-                    frames = 0;
-                    Console.WriteLine(watch.ElapsedTicks / (float)Stopwatch.Frequency * 1000);
-                    watch.Restart();
+                    _game = intermidiateData;
+                    _millisecondsAtLastUpdate = msAtLastUpdate;
                 }
+                Thread.Sleep(1000/20);
             }
         }
 

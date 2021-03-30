@@ -13,5 +13,7 @@ namespace TowerDefense.Common
         void InitializeRendering();
         
         void PollInput();
+
+        void SwapBuffers();
     }
 }

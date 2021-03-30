@@ -17,9 +17,9 @@ namespace TowerDefense.Platform
             _rect.Transform.Scale = Vector2.One * 0.1f;
         }
 
-        public void Render(in GameData game)
+        public void Render(in GameData lastTick, in GameData nextTick, float percentage)
         {
-            ImmutableArray<Enemy> enemies = game.Enemies;
+            ImmutableArray<Enemy> enemies = nextTick.Enemies;
 
             foreach (Enemy enemy in enemies)
             {
