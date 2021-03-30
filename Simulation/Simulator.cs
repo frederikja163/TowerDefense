@@ -13,9 +13,10 @@ namespace TowerDefense.Simulation
         {
             return new ISimulator[]
             {
-                new EnemyMovementSimulator(),
                 new ProjectileShooterSimulator(),
                 new ProjectileMovementSimulator(),
+                new EnemyMovementSimulator(),
+                new EnemyDeathSimulator(),
                 new TowerSimulator(activities),
             };
         }

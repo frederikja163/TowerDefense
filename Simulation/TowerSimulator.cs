@@ -43,16 +43,16 @@ namespace TowerDefense.Simulation
                 return game with {DragTower = null};
             }
             
-            bool overloap = towers.CheckForCollision(_towerPosition.Value, TowerDiameter);
+            bool overlap = towers.CheckForCollision(_towerPosition.Value, TowerDiameter);
             if (dragTower == null)
             {
-                dragTower = new DraggableTower(_towerPosition.Value, overloap);
+                dragTower = new DraggableTower(_towerPosition.Value, overlap);
             }
             else
             {
                 dragTower = dragTower with
                 {
-                    Overlap = overloap,
+                    Overlap = overlap,
                     Position = _towerPosition.Value
                 };
             }
