@@ -57,11 +57,15 @@ namespace TowerDefense.Platform.Glfw
         public void InitializeRendering()
         {
             Window.MakeCurrent(_window);
+            
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         }
 
         public void Render(GameData lastTick, GameData nextTick, float t)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Viewport(0, 0, _window.Width, _window.Height);
             RenderingData data = new RenderingData(lastTick, nextTick, t);
             
             _enemyRenderer.Render(data);
