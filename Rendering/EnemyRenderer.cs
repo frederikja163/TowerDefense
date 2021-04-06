@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using TowerDefense.Common;
 using TowerDefense.Common.Game;
@@ -19,11 +18,23 @@ namespace TowerDefense.Platform
 
         public void Render(in GameData lastTick, in GameData nextTick, float percentage)
         {
-            ImmutableArray<Enemy> enemies = nextTick.Enemies;
+            ImmutableArray<Enemy> lastEnemies = lastTick.Enemies;
+            ImmutableArray<Enemy> nextEnemies = nextTick.Enemies;
 
-            foreach (Enemy enemy in enemies)
+            
+            for (int lastIndex = 0, nextIndex = 0;
+                lastIndex < lastEnemies.Length && nextIndex < nextEnemies.Length;
+                lastIndex++, nextIndex++)
             {
-                _rect.Transform.Position = enemy.Position;
+                Enemy lastEnemy = lastEnemies[lastIndex];
+                Enemy nextEnemy = nextEnemies[nextIndex];
+                if (lastEnemy.Id != nextEnemy.Id)
+                {
+                    lastIndex--;
+                    continue;
+                }
+                
+                _rect.Transform.Position = Vector2.Lerp(lastEnemy.Position, nextEnemy.Position, percentage);
                 _rect.Render();
             }
         }

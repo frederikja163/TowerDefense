@@ -19,7 +19,7 @@ namespace TowerDefense
 
         private GameData _game;
         private bool _isRunning = true;
-        private long _millisecondsAtLastUpdate;
+        private long _ticksAtLastUpdate;
         private readonly Stopwatch _gameWatch;
 
         public Application()
@@ -71,14 +71,17 @@ namespace TowerDefense
             GameData nextTick = _game;
             while (_isRunning)
             {
+                float percentage;
                 lock (_game)
                 {
-                    lastTick = nextTick;
-                    nextTick = _game;
+                    if (nextTick.Tick != _game.Tick)
+                    {
+                        lastTick = nextTick;
+                        nextTick = _game;
+                    }
+                    percentage = ((_gameWatch.ElapsedTicks - _ticksAtLastUpdate) / (Stopwatch.Frequency * 0.05f));
                 }
 
-                float percentage =
-                    ((_gameWatch.ElapsedTicks / (1000 * Stopwatch.Frequency)) - _millisecondsAtLastUpdate) / 50f;
                 foreach (IRenderer renderer in _renderers)
                 {
                     renderer.Render(lastTick, nextTick, percentage);
@@ -97,11 +100,10 @@ namespace TowerDefense
                     intermidiateData = simulator.Tick(intermidiateData);
                 }
 
-                long msAtLastUpdate = _gameWatch.ElapsedTicks / (1000 * Stopwatch.Frequency);
                 lock (_game)
                 {
                     _game = intermidiateData;
-                    _millisecondsAtLastUpdate = msAtLastUpdate;
+                    _ticksAtLastUpdate = _gameWatch.ElapsedTicks;
                 }
                 Thread.Sleep(1000/20);
             }

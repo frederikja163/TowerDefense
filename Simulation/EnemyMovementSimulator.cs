@@ -13,13 +13,15 @@ namespace TowerDefense.Simulation
         public GameData Tick(in GameData game)
         {
             ImmutableArray<Enemy>.Builder? builder = game.Enemies.ToBuilder();
+            int entityCount = game.TotalEntityCount;
             
             _ticksForNextEnemy--;
             if (_ticksForNextEnemy < 0)
             {
                 _ticksForNextEnemy = TicksBetweenEnemySpawn;
 
-                Enemy enemy = new Enemy(Vector2.Zero);
+                entityCount++;
+                Enemy enemy = new Enemy(Vector2.Zero, entityCount);
                 builder.Add(enemy);
             }
 
@@ -29,7 +31,7 @@ namespace TowerDefense.Simulation
                 builder[i] = enemy with {Position = enemy.Position + Vector2.One / 100};
             }
             
-            return game with {Enemies = builder.ToImmutable()};
+            return game with {Enemies = builder.ToImmutable(), TotalEntityCount = entityCount};
         }
     }
 }

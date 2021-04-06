@@ -59,14 +59,16 @@ namespace TowerDefense.Simulation
 
             if (_placeTower)
             {
+                int entityCount = game.TotalEntityCount;
                 if (!dragTower.Overlap)
                 {
-                    towers = game.Towers.Add(new Tower(_towerPosition.Value, game.Tick));
+                    entityCount++;
+                    towers = game.Towers.Add(new Tower(_towerPosition.Value, game.Tick, entityCount));
                 }
                 _placeTower = false;
                 _towerPosition = null;
 
-                return game with {Towers = towers, DragTower = null};
+                return game with {Towers = towers, DragTower = null, TotalEntityCount = entityCount};
             }
             return game with {DragTower = dragTower};
         }

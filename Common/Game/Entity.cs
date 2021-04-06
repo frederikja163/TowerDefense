@@ -5,11 +5,13 @@ namespace TowerDefense.Common.Game
     public interface IEntity
     {
         Vector2 Position { get; }
+        int Id { get; }
     }
     
     public record Tower (
         Vector2 Position,
-        int TickForNextShot)
+        int TickForNextShot,
+        int Id)
         : IEntity 
     {
     }
@@ -17,12 +19,12 @@ namespace TowerDefense.Common.Game
     public record DraggableTower (
         Vector2 Position,
         bool Overlap)
-        : IEntity
     {
     }
     
     public record Enemy (
-        Vector2 Position)
+        Vector2 Position,
+        int Id)
         : IEntity
     {
         
@@ -30,7 +32,8 @@ namespace TowerDefense.Common.Game
     
     public record Projectile (
         Vector2 Position,
-        Vector2 Velocity)
+        Vector2 Velocity,
+        int Id)
         : IEntity
     {
         

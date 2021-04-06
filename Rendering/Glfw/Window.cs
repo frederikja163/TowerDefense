@@ -18,7 +18,7 @@ namespace TowerDefense.Platform.Glfw
                 {
                     throw new Exception("Window failed to create.");
                 }
-
+                
                 Keyboard = new Keyboard(this);
                 Mouse = new Mouse(this);
 

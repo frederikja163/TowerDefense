@@ -10,6 +10,7 @@ namespace TowerDefense.Simulation
     {
         public GameData Tick(in GameData game)
         {
+            int entityCount = game.TotalEntityCount;
             int tick = game.Tick;
             ImmutableArray<Enemy> enemies = game.Enemies;
             ImmutableArray<Tower> towers = game.Towers;
@@ -36,7 +37,7 @@ namespace TowerDefense.Simulation
                     Vector2 distance = closestEnemy.Position - tower.Position;
 
                     towersBuilder[i] = tower with {TickForNextShot = tower.TickForNextShot + 60};
-                    projectilesBuilder!.Add(new Projectile(tower.Position,  distance.Normalized() * 0.05f));
+                    projectilesBuilder!.Add(new Projectile(tower.Position,  distance.Normalized() * 0.05f, entityCount++));
                 }
             }
 
@@ -47,13 +48,13 @@ namespace TowerDefense.Simulation
                 {
                     Towers = towersBuilder.ToImmutable(),
                     Projectiles = projectilesBuilder!.ToImmutable(),
+                    TotalEntityCount = entityCount,
                 };
             }
             else
             {
                 return game;
             }
-            
         }
     }
 }
