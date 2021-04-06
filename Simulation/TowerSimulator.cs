@@ -29,18 +29,16 @@ namespace TowerDefense.Simulation
             _towerPosition = position;
         }
 
-        public GameData Tick(in GameData game)
+        public void Tick(SimulationData data)
         {
-            ImmutableArray<Tower> towers = game.Towers;
-            DraggableTower dragTower = game.DragTower;
-            
+            ImmutableArray<Tower>.Builder towers = data.Towers;
+            int tick = data.Tick;
+            DraggableTower? dragTower = data.DragTower;
+
             if (_towerPosition == null)
             {
-                if (dragTower == null)
-                {
-                    return game;
-                }
-                return game with {DragTower = null};
+                data.DragTower = null;
+                return;
             }
             
             bool overlap = towers.CheckForCollision(_towerPosition.Value, TowerDiameter);
@@ -56,21 +54,17 @@ namespace TowerDefense.Simulation
                     Position = _towerPosition.Value
                 };
             }
+            data.DragTower = dragTower;
 
             if (_placeTower)
             {
-                int entityCount = game.TotalEntityCount;
                 if (!dragTower.Overlap)
                 {
-                    entityCount++;
-                    towers = game.Towers.Add(new Tower(_towerPosition.Value, game.Tick, entityCount));
+                    towers.Add(new Tower(_towerPosition.Value, tick, data.TotalEntityCount++));
                 }
                 _placeTower = false;
                 _towerPosition = null;
-
-                return game with {Towers = towers, DragTower = null, TotalEntityCount = entityCount};
             }
-            return game with {DragTower = dragTower};
         }
     }
 }

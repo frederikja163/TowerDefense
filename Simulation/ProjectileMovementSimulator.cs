@@ -6,9 +6,9 @@ namespace TowerDefense.Simulation
 {
     internal sealed class ProjectileMovementSimulator
     {
-        public GameData Tick(in GameData game)
+        public void Tick(SimulationData data)
         {
-            ImmutableArray<Projectile>.Builder projetilesBuilder = game.Projectiles.ToBuilder();
+            ImmutableArray<Projectile>.Builder projetilesBuilder = data.Projectiles;
             for (var i = 0; i < projetilesBuilder.Count; i++)
             {
                 Projectile projectile = projetilesBuilder[i];
@@ -17,8 +17,6 @@ namespace TowerDefense.Simulation
                     Position = projectile.Position + projectile.Velocity,
                 };
             }
-
-            return game with {Projectiles = projetilesBuilder.ToImmutable()};
         }
     }
 }

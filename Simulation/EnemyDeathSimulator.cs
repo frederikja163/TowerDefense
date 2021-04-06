@@ -11,10 +11,10 @@ namespace TowerDefense.Simulation
     {
         private static readonly Box2 ProjectileBounds = new Box2(0, 0, 1, 1);
         
-        public GameData Tick(in GameData game)
+        public void Tick(SimulationData data)
         {
-            ImmutableArray<Enemy>.Builder enemyBuilder = game.Enemies.ToBuilder();
-            ImmutableArray<Projectile>.Builder projectileBuilder = game.Projectiles.ToBuilder();
+            ImmutableArray<Enemy>.Builder enemyBuilder = data.Enemies;
+            ImmutableArray<Projectile>.Builder projectileBuilder = data.Projectiles;
 
             for (int i = projectileBuilder.Count - 1; i >= 0; i--)
             {
@@ -34,12 +34,6 @@ namespace TowerDefense.Simulation
             {
                 enemyBuilder.RemoveAt(0);
             }
-
-            return game with
-            {
-                Enemies = enemyBuilder.ToImmutable(),
-                Projectiles = projectileBuilder.ToImmutable(),
-            };
         }
     }
 }

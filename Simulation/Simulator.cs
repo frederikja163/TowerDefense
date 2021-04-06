@@ -25,15 +25,15 @@ namespace TowerDefense.Simulation
             _towerSimulator = new TowerSimulator(activities);
         }
 
-        public GameData Tick(in GameData data)
+        public GameData Tick(GameData gameData)
         {
-            GameData d = data with {Tick = data.Tick + 1};
-            d = _projectileShooterSimulator.Tick(d);
-            d = _projectileMovementSimulator.Tick(d);
-            d = _enemyMovementSimulator.Tick(d);
-            d = _enemyDeathSimulator.Tick(d);
-            d = _towerSimulator.Tick(d);
-            return d;
+            SimulationData data = new SimulationData(gameData);
+            _projectileShooterSimulator.Tick(data);
+            _projectileMovementSimulator.Tick(data);
+            _enemyMovementSimulator.Tick(data);
+            _enemyDeathSimulator.Tick(data);
+            _towerSimulator.Tick(data);
+            return data.MakeGameData();
         }
     }
 }
