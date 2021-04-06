@@ -6,6 +6,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using TowerDefense.Common;
 using TowerDefense.Common.Game;
+using TowerDefense.Platform.Renderers;
 
 namespace TowerDefense.Platform.Glfw
 {
@@ -58,13 +59,14 @@ namespace TowerDefense.Platform.Glfw
             Window.MakeCurrent(_window);
         }
 
-        public void Render(in GameData lastTick, in GameData nextTick, float t)
+        public void Render(GameData lastTick, GameData nextTick, float t)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit);
+            RenderingData data = new RenderingData(lastTick, nextTick, t);
             
-            _enemyRenderer.Render(lastTick, nextTick, t);
-            _towerRenderer.Render(lastTick, nextTick, t);
-            _projectileRenderer.Render(lastTick, nextTick, t);
+            _enemyRenderer.Render(data);
+            _towerRenderer.Render(data);
+            _projectileRenderer.Render(data);
         }
 
         public void PollInput()
