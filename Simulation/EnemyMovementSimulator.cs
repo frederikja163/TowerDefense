@@ -5,21 +5,21 @@ using TowerDefense.Common.Game;
 
 namespace TowerDefense.Simulation
 {
-    internal sealed class EnemyMovementSimulator : ISimulator
+    internal sealed class EnemyMovementSimulator
     {
         private const int TicksBetweenEnemySpawn = 20;
         private int _ticksForNextEnemy = TicksBetweenEnemySpawn;
         
-        public GameData Tick(in GameData game)
+        public void Tick(SimulationData data)
         {
-            ImmutableArray<Enemy>.Builder? builder = game.Enemies.ToBuilder();
+            ImmutableArray<Enemy>.Builder? builder = data.Enemies;
             
             _ticksForNextEnemy--;
             if (_ticksForNextEnemy < 0)
             {
                 _ticksForNextEnemy = TicksBetweenEnemySpawn;
 
-                Enemy enemy = new Enemy(Vector2.Zero);
+                Enemy enemy = new Enemy(Vector2.Zero, data.TotalEntityCount++);
                 builder.Add(enemy);
             }
 
@@ -28,8 +28,6 @@ namespace TowerDefense.Simulation
                 Enemy enemy = builder[i];
                 builder[i] = enemy with {Position = enemy.Position + Vector2.One / 100};
             }
-            
-            return game with {Enemies = builder.ToImmutable()};
         }
     }
 }

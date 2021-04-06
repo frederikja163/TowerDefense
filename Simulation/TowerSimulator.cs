@@ -7,7 +7,7 @@ using TowerDefense.Common.Game;
 
 namespace TowerDefense.Simulation
 {
-    internal sealed class TowerSimulator : ISimulator
+    internal sealed class TowerSimulator
     {
         private const float TowerDiameter = 0.1f;
         private Vector2? _towerPosition;
@@ -29,18 +29,16 @@ namespace TowerDefense.Simulation
             _towerPosition = position;
         }
 
-        public GameData Tick(in GameData game)
+        public void Tick(SimulationData data)
         {
-            ImmutableArray<Tower> towers = game.Towers;
-            DraggableTower dragTower = game.DragTower;
-            
+            ImmutableArray<Tower>.Builder towers = data.Towers;
+            int tick = data.Tick;
+            DraggableTower? dragTower = data.DragTower;
+
             if (_towerPosition == null)
             {
-                if (dragTower == null)
-                {
-                    return game;
-                }
-                return game with {DragTower = null};
+                data.DragTower = null;
+                return;
             }
             
             bool overlap = towers.CheckForCollision(_towerPosition.Value, TowerDiameter);
@@ -56,19 +54,17 @@ namespace TowerDefense.Simulation
                     Position = _towerPosition.Value
                 };
             }
+            data.DragTower = dragTower;
 
             if (_placeTower)
             {
                 if (!dragTower.Overlap)
                 {
-                    towers = game.Towers.Add(new Tower(_towerPosition.Value, game.Tick));
+                    towers.Add(new Tower(_towerPosition.Value, tick, data.TotalEntityCount++));
                 }
                 _placeTower = false;
                 _towerPosition = null;
-
-                return game with {Towers = towers, DragTower = null};
             }
-            return game with {DragTower = dragTower};
         }
     }
 }

@@ -1,26 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using TowerDefense.Common;
+using TowerDefense.Common.Game;
+using TowerDefense.Platform.Renderers;
 
 namespace TowerDefense.Platform.Glfw
 {
-    internal sealed class GlfwPlatform : IPlatform
+    public sealed class GlfwPlatform
     {
         private readonly Window _window;
+        private readonly EnemyRenderer _enemyRenderer;
+        private readonly TowerRenderer _towerRenderer;
+        private readonly ProjectileRenderer _projectileRenderer;
 
-        public GlfwPlatform()
+        public GlfwPlatform(ActivityList activities)
         {
             if (!GLFW.Init())
             {
                 throw new Exception("GLFW failed to initialize.");
             }
             _window = new Window();
+            Window.MakeCurrent(_window);
+            GLLoader.LoadBindings(new GLFWBindingsContext());
+            
+            _enemyRenderer = new EnemyRenderer();
+            _towerRenderer = new TowerRenderer();
+            _projectileRenderer = new ProjectileRenderer();
+            Window.MakeCurrent(null);
+            
+            ImplementActivities(activities);
         }
 
-        public void ImplementActivities(ActivityList activities)
+        private void ImplementActivities(ActivityList activities)
         {
             Keyboard keyboard = _window.Keyboard;
             Mouse mouse = _window.Mouse;
@@ -41,18 +56,27 @@ namespace TowerDefense.Platform.Glfw
 
         public void InitializeRendering()
         {
-            _window.MakeCurrent();
-            GLLoader.LoadBindings(new GLFWBindingsContext());
+            Window.MakeCurrent(_window);
+        }
+
+        public void Render(GameData lastTick, GameData nextTick, float t)
+        {
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+            RenderingData data = new RenderingData(lastTick, nextTick, t);
             
-            Platformer.InitializeRenderers(_window);
+            _enemyRenderer.Render(data);
+            _towerRenderer.Render(data);
+            _projectileRenderer.Render(data);
         }
 
         public void PollInput()
         {
-            // TODO: This should not be called from poll input.
-            _window.SwapBuffers();
-            
             GLFW.PollEvents();
+        }
+
+        public void SwapBuffers()
+        {
+            _window.SwapBuffers();
         }
 
         public void Dispose()

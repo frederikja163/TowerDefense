@@ -6,19 +6,21 @@ using System.Threading;
 using TowerDefense.Common;
 using TowerDefense.Common.Game;
 using TowerDefense.Platform;
+using TowerDefense.Platform.Glfw;
 using TowerDefense.Simulation;
 
 namespace TowerDefense
 {
     internal sealed class Application
     {
-        private readonly IPlatform _platform;
-        private readonly IReadOnlyCollection<IRenderer> _renderers;
-        private readonly IReadOnlyCollection<ISimulator> _simulators;
+        private readonly GlfwPlatform _platform;
+        private readonly Simulator _simulator;
         private readonly ActivityList _activities;
 
         private GameData _game;
         private bool _isRunning = true;
+        private long _ticksAtLastUpdate;
+        private readonly Stopwatch _gameWatch;
 
         public Application()
         {
@@ -27,17 +29,14 @@ namespace TowerDefense
                 ImmutableArray<Tower>.Empty,
                 ImmutableArray<Projectile>.Empty,
                 null,
-                0
-                );
+                0);
 
-            _platform = Platformer.GetPlatform();
-
-            _renderers = Platformer.GetRenderers();
+            _gameWatch = new Stopwatch();
 
             _activities = new ActivityList();
-            _platform.ImplementActivities(_activities);
-
-            _simulators = Simulator.GetSimulators(_activities);
+            _platform = new GlfwPlatform(_activities);
+            
+            _simulator = new Simulator(_activities);
             
             _activities[Activities.ExitApplication].Callback += OnExitApplication;
         }
@@ -49,35 +48,55 @@ namespace TowerDefense
 
         public void Run()
         {
-            _platform.InitializeRendering();
-            // TODO: Move performance measurements to a debug screen of some kind.
-            int frames = 0;
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
+            _gameWatch.Start();
+            Thread simulationThread = new Thread(SimulationThreadRun);
+            simulationThread.Start();
+            Thread renderingThread = new Thread(RenderingThreadRun);
+            renderingThread.Start();
+            
             while (_isRunning)
             {
                 _platform.PollInput();
+            }
+            _gameWatch.Stop();
+        }
 
-                _game = _game with {Tick = _game.Tick + 1};
-                foreach (ISimulator simulator in _simulators)
+        private void RenderingThreadRun()
+        {
+            _platform.InitializeRendering();
+            GameData lastTick = _game;
+            GameData nextTick = _game;
+            while (_isRunning)
+            {
+                float percentage;
+                lock (_game)
                 {
-                    _game = simulator.Tick(_game);
+                    if (nextTick.Tick != _game.Tick)
+                    {
+                        lastTick = nextTick;
+                        nextTick = _game;
+                    }
+                    percentage = ((_gameWatch.ElapsedTicks - _ticksAtLastUpdate) / (Stopwatch.Frequency * 0.05f));
                 }
-                watch.Stop();
+
+                _platform.Render(lastTick, nextTick, percentage);
+                _platform.SwapBuffers();
+            }
+        }
+
+        private void SimulationThreadRun()
+        {
+            while (_isRunning)
+            {
+                GameData tempData = _game;
+                tempData = _simulator.Tick(tempData);
+
+                lock (_game)
+                {
+                    _game = tempData;
+                    _ticksAtLastUpdate = _gameWatch.ElapsedTicks;
+                }
                 Thread.Sleep(1000/20);
-                watch.Start();
-
-                foreach (IRenderer renderer in _renderers)
-                {
-                    renderer.Render(_game);
-                }
-
-                if (frames++ >= 100)
-                {
-                    frames = 0;
-                    Console.WriteLine(watch.ElapsedTicks / (float)Stopwatch.Frequency * 1000);
-                    watch.Restart();
-                }
             }
         }
 

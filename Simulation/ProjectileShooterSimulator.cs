@@ -6,54 +6,32 @@ using TowerDefense.Common.Game;
 
 namespace TowerDefense.Simulation
 {
-    internal sealed class ProjectileShooterSimulator : ISimulator
+    internal sealed class ProjectileShooterSimulator
     {
-        public GameData Tick(in GameData game)
+        public void Tick(SimulationData data)
         {
-            int tick = game.Tick;
-            ImmutableArray<Enemy> enemies = game.Enemies;
-            ImmutableArray<Tower> towers = game.Towers;
-            ImmutableArray<Projectile> projectiles = game.Projectiles;
+            int tick = data.Tick;
+            ImmutableArray<Enemy>.Builder enemies = data.Enemies;
+            ImmutableArray<Tower>.Builder towers = data.Towers;
+            ImmutableArray<Projectile>.Builder projectiles = data.Projectiles;
 
-            if (enemies.IsEmpty)
+            if (enemies.Count <= 0)
             {
-                return game;
+                return;
             }
 
-            ImmutableArray<Tower>.Builder? towersBuilder = null;
-            ImmutableArray<Projectile>.Builder? projectilesBuilder = null;
-            for (var i = 0; i < towers.Length; i++)
+            for (var i = 0; i < towers.Count; i++)
             {
                 Tower tower = towers[i];
                 if (tower.TickForNextShot <= tick)
                 {
-                    if (towersBuilder == null)
-                    {
-                        towersBuilder = towers.ToBuilder();
-                        projectilesBuilder = projectiles.ToBuilder();
-                    }
                     enemies.GetClosestDistanceSqrt(tower.Position, out var closestEnemy);
                     Vector2 distance = closestEnemy.Position - tower.Position;
 
-                    towersBuilder[i] = tower with {TickForNextShot = tower.TickForNextShot + 60};
-                    projectilesBuilder!.Add(new Projectile(tower.Position,  distance.Normalized() * 0.05f));
+                    towers[i] = tower with {TickForNextShot = tower.TickForNextShot + 60};
+                    projectiles!.Add(new Projectile(tower.Position,  distance.Normalized() * 0.05f, data.TotalEntityCount++));
                 }
             }
-
-            // If a tower has been updated we need to return the new towers.
-            if (towersBuilder != null)
-            {
-                return game with
-                {
-                    Towers = towersBuilder.ToImmutable(),
-                    Projectiles = projectilesBuilder!.ToImmutable(),
-                };
-            }
-            else
-            {
-                return game;
-            }
-            
         }
     }
 }
