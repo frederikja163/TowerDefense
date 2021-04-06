@@ -7,7 +7,7 @@ using TowerDefense.Common.Game;
 
 namespace TowerDefense.Simulation
 {
-    internal sealed class TowerSimulator : ISimulator
+    internal sealed class TowerSimulator
     {
         private const float TowerDiameter = 0.1f;
         private Vector2? _towerPosition;

@@ -5,7 +5,7 @@ using TowerDefense.Platform.Glfw;
 
 namespace TowerDefense.Platform
 {
-    internal sealed class ClearRenderer : IRenderer
+    internal sealed class ClearRenderer
     {
         private readonly Window _window;
 

@@ -6,7 +6,7 @@ using TowerDefense.Platform.Rendering;
 
 namespace TowerDefense.Platform
 {
-    public sealed class EnemyRenderer : IRenderer
+    public sealed class EnemyRenderer
     {
         private readonly Rect _rect;
         

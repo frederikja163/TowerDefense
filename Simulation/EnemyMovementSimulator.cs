@@ -5,7 +5,7 @@ using TowerDefense.Common.Game;
 
 namespace TowerDefense.Simulation
 {
-    internal sealed class EnemyMovementSimulator : ISimulator
+    internal sealed class EnemyMovementSimulator
     {
         private const int TicksBetweenEnemySpawn = 20;
         private int _ticksForNextEnemy = TicksBetweenEnemySpawn;

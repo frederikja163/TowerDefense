@@ -7,7 +7,7 @@ using TowerDefense.Common.Game;
 
 namespace TowerDefense.Simulation
 {
-    internal sealed class EnemyDeathSimulator : ISimulator
+    internal sealed class EnemyDeathSimulator
     {
         private static readonly Box2 ProjectileBounds = new Box2(0, 0, 1, 1);
         

@@ -6,7 +6,7 @@ using TowerDefense.Common.Game;
 
 namespace TowerDefense.Simulation
 {
-    internal sealed class ProjectileShooterSimulator : ISimulator
+    internal sealed class ProjectileShooterSimulator
     {
         public GameData Tick(in GameData game)
         {

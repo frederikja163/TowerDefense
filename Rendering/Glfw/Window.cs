@@ -37,11 +37,18 @@ namespace TowerDefense.Platform.Glfw
         public Keyboard Keyboard { get; }
         public Mouse Mouse { get; }
 
-        public void MakeCurrent()
+        public static void MakeCurrent(Window? window)
         {
             unsafe
             {
-                GLFW.MakeContextCurrent(Handle);
+                if (window == null)
+                {
+                    GLFW.MakeContextCurrent(null);
+                }
+                else
+                {
+                    GLFW.MakeContextCurrent(window.Handle);
+                }
             }
         }
 

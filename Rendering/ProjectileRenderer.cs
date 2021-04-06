@@ -6,7 +6,7 @@ using TowerDefense.Platform.Rendering;
 
 namespace TowerDefense.Platform
 {
-    internal sealed class ProjectileRenderer : IRenderer
+    internal sealed class ProjectileRenderer
     {
         private readonly Rect _rect;
 
