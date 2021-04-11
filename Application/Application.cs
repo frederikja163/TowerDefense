@@ -13,6 +13,7 @@ namespace TowerDefense
 {
     internal sealed class Application
     {
+        private const int TicksPerSecond = 20;
         private readonly GlfwPlatform _platform;
         private readonly Simulator _simulator;
         private readonly ActivityList _activities;
@@ -76,7 +77,7 @@ namespace TowerDefense
                         lastTick = nextTick;
                         nextTick = _game;
                     }
-                    percentage = ((_gameWatch.ElapsedTicks - _ticksAtLastUpdate) / (Stopwatch.Frequency * 0.05f));
+                    percentage = ((_gameWatch.ElapsedTicks - _ticksAtLastUpdate) / ((float)Stopwatch.Frequency / TicksPerSecond));
                 }
 
                 _platform.Render(lastTick, nextTick, percentage);
@@ -96,7 +97,7 @@ namespace TowerDefense
                     _game = tempData;
                     _ticksAtLastUpdate = _gameWatch.ElapsedTicks;
                 }
-                Thread.Sleep(1000/20);
+                Thread.Sleep(1000/TicksPerSecond);
             }
         }
 
