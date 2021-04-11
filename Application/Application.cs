@@ -25,6 +25,8 @@ namespace TowerDefense
 
         public Application()
         {
+            Log.Info("Initializing.");
+            
             _game = new GameData(
                 ImmutableArray<Enemy>.Empty,
                 ImmutableArray<Tower>.Empty,
@@ -49,12 +51,14 @@ namespace TowerDefense
 
         public void Run()
         {
+            Log.Info("Initializing threads.");
             _gameWatch.Start();
             Thread simulationThread = new Thread(SimulationThreadRun);
             simulationThread.Start();
             Thread renderingThread = new Thread(RenderingThreadRun);
             renderingThread.Start();
             
+            Log.Info("Initializing input thread.");
             while (_isRunning)
             {
                 _platform.PollInput();
@@ -64,6 +68,7 @@ namespace TowerDefense
 
         private void RenderingThreadRun()
         {
+            Log.Info("Initializing rendering thread.");
             _platform.InitializeRendering();
             GameData lastTick = _game;
             GameData nextTick = _game;
@@ -87,6 +92,7 @@ namespace TowerDefense
 
         private void SimulationThreadRun()
         {
+            Log.Info("Initializing simulation thread.");
             while (_isRunning)
             {
                 GameData tempData = _game;

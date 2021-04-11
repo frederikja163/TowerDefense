@@ -7,25 +7,33 @@ namespace TowerDefense.Common
 {
     public enum MessageSeverity
     {
+        Debug,
         Info,
-        Warning,
+        Warn,
         Error
     }
     
     public static class Log
     {
-        static void ConsoleLog(string message, MessageSeverity severity, int lineNumber, string filePath)
+        static Log()
+        {
+            // TODO: Dont do this for final version. Instead create a new file to write to.
+            File.Delete("log.txt");
+        }
+        
+        private static void ConsoleLog(string message, MessageSeverity severity)
         {
             switch (severity)
             {
-                case MessageSeverity.Info:
-                    Console.ForegroundColor = ConsoleColor.Cyan;
+                case MessageSeverity.Debug:
+                    Console.ForegroundColor = ConsoleColor.Gray;
                     break;
-                
-                case MessageSeverity.Warning:
+                case MessageSeverity.Info:
+                    Console.ForegroundColor = ConsoleColor.White;
+                    break;
+                case MessageSeverity.Warn:
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     break;
-                
                 case MessageSeverity.Error:
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
@@ -34,46 +42,48 @@ namespace TowerDefense.Common
             Console.WriteLine(message);
         }
         
-        static void FileLog(string message, MessageSeverity severity, int lineNumber, string filePath)
+        private static void FileLog(string message)
         {
-            String timeStamp = DateTime.Now.ToString();
-            String severityString = "?";
+            using StreamWriter stream = File.AppendText("log.txt");
+            stream.WriteLine(message);
+            stream.Flush();
+        }
 
-            switch (severity)
+        public static void Debug(object? obj1, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "")
+        {
+#if DEBUG
+            LogMessage(obj1?.ToString(), MessageSeverity.Debug, lineNumber, filePath);
+#endif
+        }
+        public static void Debug(object? obj1, object? obj2, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "")
+        {
+#if DEBUG
+            LogMessage(obj1?.ToString() + obj2?.ToString(), MessageSeverity.Debug, lineNumber, filePath);
+#endif
+        }
+
+        public static void Info(object? obj1, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "")
+            => LogMessage(obj1?.ToString(), MessageSeverity.Info, lineNumber, filePath);
+        public static void Info(object? obj1, object? obj2, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "")
+            => LogMessage(obj1?.ToString() + obj2?.ToString(), MessageSeverity.Info, lineNumber, filePath);
+        
+        public static void Warning(object? obj1, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "")
+            => LogMessage(obj1?.ToString(), MessageSeverity.Warn, lineNumber, filePath);
+        
+        public static void Error(object? obj1, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "")
+            => LogMessage(obj1?.ToString(), MessageSeverity.Error, lineNumber, filePath);
+
+        private static void LogMessage(string? message, MessageSeverity severity, int lineNumber, string filePath)
+        {
+            if (message == null)
             {
-                case MessageSeverity.Info:
-                    severityString = "INFO";
-                    break;
-                
-                case MessageSeverity.Warning:
-                    severityString = "WARNING";
-                    break;
-                
-                case MessageSeverity.Error:
-                    severityString = "ERROR";
-                    break;
+                message = "";
             }
-            
-            File.WriteAllTextAsync("log.txt",
-                $"{timeStamp} | {severityString} | {message} | in {filePath} at line {lineNumber}");
-        }
-
-        public static void Info(string message, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "")
-        {
-            ConsoleLog(message, MessageSeverity.Info, lineNumber, filePath);
-            FileLog(message, MessageSeverity.Info, lineNumber, filePath);
-        }
-        
-        public static void Warning(string message, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "")
-        {
-            ConsoleLog(message, MessageSeverity.Warning, lineNumber, filePath);
-            FileLog(message, MessageSeverity.Warning, lineNumber, filePath);
-        }
-        
-        public static void Error(string message, [CallerLineNumber] int lineNumber = 0, [CallerFilePath] string filePath = "")
-        {
-            ConsoleLog(message, MessageSeverity.Error, lineNumber, filePath);
-            FileLog(message, MessageSeverity.Error, lineNumber, filePath);
+            string fileName = Path.GetFileName(filePath);
+            String timeStamp = DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss.fff");
+            string fullMessage = $"[{severity} {timeStamp} {fileName}#{lineNumber}]\t{message}";
+            ConsoleLog(fullMessage, severity);
+            FileLog(fullMessage);
         }
     }
 }

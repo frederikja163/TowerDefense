@@ -26,6 +26,11 @@ namespace TowerDefense.Platform.Glfw
             _window = new Window();
             Window.MakeCurrent(_window);
             GLLoader.LoadBindings(new GLFWBindingsContext());
+
+            Log.Info("GPU Vendor: ", GL.GetString(StringName.Vendor));
+            Log.Info("Renderer: ", GL.GetString(StringName.Renderer));
+            Log.Info("OpenGL version: ", GL.GetString(StringName.Version));
+            Log.Info("GLSL version: ", GL.GetString(StringName.ShadingLanguageVersion));
             
             _enemyRenderer = new EnemyRenderer();
             _towerRenderer = new TowerRenderer();
